@@ -59,13 +59,12 @@
 	}
 	//area2 from the textbook
 	var area2 = function(pt1, pt2, pt3){
+		//reversed the y because js coordinates
 		return (pt2.x - pt1.x)*(pt1.y-pt3.y)-(pt3.x-pt1.x)*(pt1.y-pt2.y);
 	}
 	//left turn
 	var left = function(pt1, pt2, pt3){
-		var a = area2(pt1,pt2,pt3);
-		console.log(a)
-		return  a > 0; //reverse of normal left because js screen coordinate reverses y
+		return  area2(pt1,pt2,pt3) > 0; //reverse of normal left because js screen coordinate reverses y
 	}
 
 	//graham scan function
