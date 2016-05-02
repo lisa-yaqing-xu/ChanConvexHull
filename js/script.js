@@ -33,18 +33,17 @@
 
 	}
 	var linepts = function(p){
-		//ctx.beginPath();
-		//ctx.moveTo(p[0].x,p[0].y);
+		ctx.beginPath();
+		ctx.moveTo(p[0].x,p[0].y);
 		for(var i = 1; i < p.length; i ++){
 			console.log(angletopt(p[0],p[i]))
 			//console.log(p[i].y)
-			ctx.beginPath();
-			ctx.moveTo(p[0].x,p[0].y);
+			
 			ctx.lineTo(p[i].x,p[i].y);
-			ctx.moveTo(p[0].x,p[0].y);
-			ctx.stroke();
-			ctx.closePath();
+			
 		}
+		ctx.stroke();
+		ctx.closePath();
 	}
 
 	//angle calculation helper function
@@ -58,14 +57,15 @@
 		//console.log(num)
 		return num;
 	}
-	//distance formula--for tiebreakers
-	var dist = function(pt1,pt2){
-		var x_2 = pt2.x - pt1.x;
-		x_2 = x_2 * x_2;
-		var y_2 = pt2.y - pt1.y;
-		y_2 = y_2 * y_2;
-
-		return Math.sqrt(x_2+y_2);
+	//area2 from the textbook
+	var area2 = function(pt1, pt2, pt3){
+		return (pt2.x - pt1.x)*((canvasheight-pt3.y)-(canvasheight-pt1.y))-(pt3.x-pt1.x)*((canvasheight-pt2.y)-(canvasheight-pt1.y));
+	}
+	//left turn
+	var left = function(pt1, pt2, pt3){
+		var a = area2(pt1,pt2,pt3);
+		console.log(a)
+		return  a > 0; //reverse of normal left because js screen coordinate reverses y
 	}
 
 	//graham scan function
@@ -85,7 +85,6 @@
 		
 		//sort the array by angle
 		p.sort(function(a,b){
-			console.log(v_lowest);
 			//a is lowest point
 			if(a.y === v_lowest.y && a.x === v_lowest.x)return -1;
 			//b is lowest point
@@ -96,7 +95,6 @@
 			var ang_b = angletopt(v_lowest,b);
 			if(ang_a > ang_b) return 1;
 			else return -1;
-		
 		});
 
 		//remove doubles
@@ -107,8 +105,38 @@
 			}
 			i++;
 		}
-		console.log(p);
-		linepts(p);
+
+		var stack = [];
+		 //yeah im hardcoding this but we're not doing 
+		 //graham scan with < 4 things anyway i think having
+		 //2 is ok
+		stack[0] = p[0];
+		stack[1] = p[1];
+		var current = p[2];
+		var index = 2;
+		var stacklen = 2;
+		while(index < p.length){
+			stacklen = stack.length;
+			console.log(stacklen);
+			if(stacklen > 1){//make sure there's at least 2 things before left test
+				var l = left(stack[stacklen-2],stack[stacklen-1],p[index])
+				if(l){
+					stack.push(p[index]);
+					index++;
+				}
+				else{
+					stack.pop();
+				}
+			}
+			else{
+				stack.push(p[index]);
+				index++;
+			}
+			
+		}
+		stack.push(p[0]);
+		console.log(stack);
+		linepts(stack);
 
 	}
 
@@ -134,7 +162,9 @@
 	}
 
 	var calchull = function(){
-		partialhull(256);
+		if(pts.length){
+			partialhull(256);
+		}
 	}
 
 	$("#gen_pts").on("click",function(){
