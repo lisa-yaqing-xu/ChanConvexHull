@@ -59,7 +59,7 @@
 	}
 	//area2 from the textbook
 	var area2 = function(pt1, pt2, pt3){
-		return (pt2.x - pt1.x)*((canvasheight-pt3.y)-(canvasheight-pt1.y))-(pt3.x-pt1.x)*((canvasheight-pt2.y)-(canvasheight-pt1.y));
+		return (pt2.x - pt1.x)*(pt1.y-pt3.y)-(pt3.x-pt1.x)*(pt1.y-pt2.y);
 	}
 	//left turn
 	var left = function(pt1, pt2, pt3){
