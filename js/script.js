@@ -7,7 +7,6 @@
 	var canvasheight = canvas.height;
 	var pi = 3.1415926535897;
 	var pts = [];
-	var lowestpt = null;
 	var _LEFT = 1;
 	var _RIGHT = -1;
 	var _SAME = 0;
@@ -96,13 +95,6 @@
 	var left = function(pt1, pt2, pt3){
 		return  area2(pt1,pt2,pt3) > 0; 
 	}
-
-	var dir = function(pt1, pt2, pt3){
-		var d = area2(pt1,pt2,pt3); 
-		if(d === 0) return _SAME;
-		else if(d < 0) return _RIGHT;
-		else return _LEFT;
-	}
 	var samept = function(p1, p2){
 		return p1.x === p2.x && p1.y === p2.y;
 	}
@@ -181,7 +173,7 @@
 		return stack;
 
 	}
-	//variation on binary search
+	//variation on binary search, more details in report
 	var tangent_bin_search = function(hull,p1,p2){
 		
 		var index = -1;
@@ -239,17 +231,15 @@
 
 	var jarvismarch = function(m,hulls){
 		if (hulls.length === 1) return hulls[0] //there is one hull why are we jarvismarching
-		//sort hulls;
+		//sort hulls based on lowest point
 		hulls.sort(function(a,b){
 			if(a[0].y < b[0].y) return 1;
 			else return -1;
 		})
-		//test code for hull order
-			ctx.strokeStyle="#FF0000";
+		//visuals
+		ctx.strokeStyle="#FF0000";
 		for(var i = 0; i < hulls.length;i++){
-		
 			linepts(hulls[i]);
-
 		}
 		ctx.strokeStyle="#000000";
 
