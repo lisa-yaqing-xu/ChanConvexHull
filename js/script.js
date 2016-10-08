@@ -19,8 +19,8 @@
 	var clearCanvas = function(){
 		ctx.clearRect(0, 0, canvaswidth, canvasheight);
 	}
-	var bot_limit = 100;
-	var top_limit = 100;
+	var bot_limit = 500;
+	var top_limit = 500;
 	//randomly generate points
 	var generatedots = function(){
 		clearCanvas();
@@ -46,10 +46,10 @@
 	var linepts = function(p){
 		ctx.beginPath();
 		ctx.moveTo(p[0].x,p[0].y);
-		console.log(p.length);
-		console.log(p);
+		//console.log(p.length);
+		//console.log(p);
 		for(var i = 1; i < p.length; i ++){
-			console.log(i);
+			//console.log(i);
 			ctx.lineTo(p[i].x,p[i].y);
 			
 		}
@@ -168,7 +168,7 @@
 			
 		}
 		//stack.push(p[0]);
-		console.log(stack);
+		//console.log(stack);
 		//linepts(stack);
 		return stack;
 
@@ -189,6 +189,13 @@
 		var searchsize = (end-start)+1;
 		//doing a variation of binary search by comparing range of values instead-- because the order is wrapped around, the section containing the larger value will be larger on the ends
 		//console.log("HULL SIZE",length);
+		if (searchsize === 1) return 0;
+		else if (searchsize === 2) {
+			var ret0 = samept(p2,hull[0])?-999:angle3pt(p1,p2,hull[0]);
+			var ret1 = samept(p2,hull[1])?-999:angle3pt(p1,p2,hull[1]);
+			if(ret0 > ret1) return 0;
+			return 1;
+		}
 		while(searchsize > 2){
 			searchsize = (end-start)+1;
 
@@ -269,7 +276,7 @@
 			//console.log(convexhull[i])
 			if(pk_1.x === convexhull[0].x && pk_1.y === convexhull[0].y) return convexhull;
 			convexhull.push(pk_1);
-			//drawline(convexhull[i],pk_1);
+			drawline(convexhull[i],pk_1);
 		}
 		return false;
 	}
@@ -293,7 +300,7 @@
 			var h = grahamscan(partition[i]);
 			hulls.push(h);
 		}
-		console.log(hulls);
+		//console.log(hulls);
 		return jarvismarch(m,hulls);
 
 
