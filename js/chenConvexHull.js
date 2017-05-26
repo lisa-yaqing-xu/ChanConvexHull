@@ -11,8 +11,7 @@ const ChenConvexHull = function(){
 	 * @param {*} pt2 
 	 */
 	function angleToPoint(pt1, pt2){
-		return Math.atan2(pt1.y-pt2.y,pt2.x-pt1.x);
-		
+		return Math.atan2(pt1.y-pt2.y,pt2.x-pt1.x);	
 	}
 	
 	/**
@@ -46,16 +45,25 @@ const ChenConvexHull = function(){
 	function checkIfLeftTurn(pt1, pt2, pt3){
 		return  getAreaBetween3Points(pt1,pt2,pt3) > 0; 
 	}
+
+	/**
+	 * Check if the points are the same
+	 * @param {*} p1 
+	 * @param {*} p2 
+	 */
 	function isSamePoint(p1, p2){
 		if(!p1 || !p2) return false;
 		return p1.x === p2.x && p1.y === p2.y;
 	}
-	//graham scan function
+
+	/**
+	 * Do graham scan on the set of points given.
+	 * @param {*} points 
+	 */
 	function grahamScan(points){
 		let v_lowest = points[0];
 		//find lowest point
 		for(let i = 1; i < points.length; i++){
-			//console.log(p[i])
 			if(points[i].y > v_lowest.y){
 				v_lowest = points[i];
 			}
@@ -123,7 +131,13 @@ const ChenConvexHull = function(){
 		return stack;
 
 	}
-	//variation on binary search, more details in report
+	/**
+	 * Variation of binary search to find the tangent.
+	 * Full details on report
+	 * @param {*} hull 
+	 * @param {*} p1 
+	 * @param {*} p2 
+	 */
 	function tangentBinarySearch(hull,p1,p2){
 		
 		let index = -1;
@@ -132,92 +146,100 @@ const ChenConvexHull = function(){
 
 		let start = 0;
 		let end = length-1;
-		let leftsplit = -1; 
-		let rightsplit = -1;
+		let leftSplit = -1; 
+		let rightSplit = -1;
 
 		let direction = null;
-		let searchsize = (end-start)+1;
-		//doing a variation of binary search by comparing range of values instead-- because the order is wrapped around, the section containing the larger value will be larger on the ends
-		
-		if (searchsize === 1) return 0;
-		else if (searchsize === 2) {
-			let ret0 = isSamePoint(p2,hull[0])?-999:getAngleBetween3Points(p1,p2,hull[0]);
-			let ret1 = isSamePoint(p2,hull[1])?-999:getAngleBetween3Points(p1,p2,hull[1]);
+		let searchSize = (end-start)+1;
+		//doing a variation of binary search by comparing range of values instead-- because the order is wrapped around
+		//the section containing the larger value will be larger on the ends
+	
+		if (searchSize === 1) return 0;
+		else if (searchSize === 2) {
+			let ret0 = findAngle(0)
+			let ret1 = findAngle(1)
 			if(ret0 > ret1) return 0;
 			return 1;
 		}
-		while(searchsize > 2){
-			searchsize = (end-start)+1;
+		while(searchSize > 2){
+			searchSize = (end-start)+1;
 
-			let s_ang = isSamePoint(p2,hull[start])?-999:getAngleBetween3Points(p1,p2,hull[start]);
-			let e_ang = isSamePoint(p2,hull[end])?-999:getAngleBetween3Points(p1,p2,hull[end]);
-			let split = Math.floor((searchsize)/2)+start;
+			let startAngle = findAngle(start);
+			let endAngle = findAngle(end);
+			let split = Math.floor((searchSize)/2)+start;
 			let mid = null;
-			if(searchsize%2 === 0){//even case
-				leftsplit = split-1;
-				rightsplit = split;
+			if(searchSize%2 === 0){//even case
+				leftSplit = split-1;
+				rightSplit = split;
 			}else{
 				mid = split;
-				leftsplit = split-1;
-				rightsplit = split+1;
+				leftSplit = split-1;
+				rightSplit = split+1;
 			}
 
-			
-			let l_ang = isSamePoint(p2,hull[leftsplit])?-999:getAngleBetween3Points(p1,p2,hull[leftsplit]);
-			let r_ang = isSamePoint(p2,hull[rightsplit])?-999:getAngleBetween3Points(p1,p2,hull[rightsplit]);
-			let m_ang = mid?(isSamePoint(p2,hull[mid])?-999:getAngleBetween3Points(p1,p2,hull[mid])):-9999;
-			let maxleft = Math.max(s_ang,l_ang);
-			let maxright = Math.max(r_ang,e_ang)
-			if(m_ang >= l_ang && m_ang >= r_ang){
-				
+			let leftAngle = findAngle(leftSplit);
+			let rightAngle = findAngle(rightSplit);
+			let midAngle = mid? findAngle(mid) :-9999;
+			let maxLeft = Math.max(startAngle,leftAngle);
+			let maxRight = Math.max(rightAngle,endAngle)
+			if(midAngle >= leftAngle && midAngle >= rightAngle){
 				return mid;
 			}
-			
-			else if (maxleft > maxright){
-				end = leftsplit;
-				if(s_ang === l_ang) return end;
+			else if (maxLeft > maxRight){
+				end = leftSplit;
+				if(startAngle === leftAngle) return end;
 			}
 			else{
-				start = rightsplit;
-				if(r_ang === e_ang) return start;
+				start = rightSplit;
+				if(rightAngle === endAngle) return start;
 			}
 		}
 		return start;
 
+		function findAngle(param){
+			return (isSamePoint(p2,hull[param]) ? -999 : getAngleBetween3Points(p1,p2,hull[param]))
+		}
+
 	}
 
-	function jarvisMarch(m,hulls){
-		if (hulls.length === 1) return hulls[0] //there is one hull why are we jarvismarching
-		//sort hulls based on lowest point
-		hulls.sort(function(a,b){
+
+	/**
+	 * do Jarvis March on the subHulls calculated by graham scan
+	 * @param {*} m 
+	 * @param {*} subHulls 
+	 */
+	function jarvisMarch(m,subHulls){
+		//We do not need to Jarvis march if there is only one subhull. This is our convex hull.
+		if (subHulls.length === 1) return subHulls[0] 
+		
+		//sort our sub hulls by their lowest point.
+		subHulls.sort(function(a,b){
 			if(a[0].y < b[0].y) return 1;
 			else return -1;
-		})
-		//visuals
-		
-
+		});
 		
 		let convexhull = [];
-		convexhull[0] = hulls[0][0]//bottom most point;
-		let hullindex = 0;
+		convexhull[0] = subHulls[0][0]
+
+		let hullIndex = 0;
+		//initial search point set to (0, first point in the full hull) for tangent search purposes
 		let p0 = {x:0, y:convexhull[0].y};
-		//console.log("start",hulls[0][0])
+		
 
 		for(let i = 0; i < m; i++){
-			let max_ang = -99999999;
+			let maxAngle = -99999999;
 			let pk_1 = null;
 			let last = (i === 0)?p0:convexhull[i-1];
-			for(let j = 0; j < hulls.length; j++){
-				let res = tangentBinarySearch(hulls[j],last,convexhull[i]);
-				//console.log(res);
-				let ang = getAngleBetween3Points(last,convexhull[i],hulls[j][res])
+			for(let j = 0; j < subHulls.length; j++){
+				let result = tangentBinarySearch(subHulls[j],last,convexhull[i]);
+				let angle = getAngleBetween3Points(last,convexhull[i],subHulls[j][result])
 		
-				if(!isNaN(ang) && ang > max_ang){
-					max_ang = ang;
-					pk_1 = hulls[j][res];
+				if(!isNaN(angle) && angle > maxAngle){
+					maxAngle = angle;
+					pk_1 = subHulls[j][result];
 				}
 			}
-			
+			//we went full circle, have convex hull
 			if(pk_1.x === convexhull[0].x && pk_1.y === convexhull[0].y) return convexhull;
 			convexhull.push(pk_1);
 		}
@@ -249,6 +271,10 @@ const ChenConvexHull = function(){
 
 	}
 
+	/**
+	 * find the convex hull of a set of points and also the partial hulls used in the final calculation
+	 * @param {*} points 
+	 */
 	function calculateHull(points){
 		let finalHull;
 		let partialHulls = [];
