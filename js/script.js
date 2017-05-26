@@ -10,7 +10,18 @@
 	const minNumPoints = 500;
 	const maxNumPoints = 1000;
 
+	//color definitions from main site
+	const colors = {
+		almostBlackBlue: '#0d0e0f',
+		electricBlue: '#32b0ee',	
+		slate:'#7a8d93'
+	}
+
+	ctx.fillStyle = colors.slate;
+	
 	let points = [];
+
+	
 
 	initEventListeners();
 
@@ -34,7 +45,6 @@
 	//randomly generate points
 	function generatePoints() {
 		let pts = [];
-
 		let numpts = Math.floor(Math.random() * (maxNumPoints - minNumPoints + 1)) + minNumPoints;
 		for (let i = 0; i < numpts; i++) {
 			let genx = Math.floor(Math.random() * (canvasWidth - 60)) + 30;
@@ -48,6 +58,7 @@
 	}
 	function redrawPoints(points) {
 		clearCanvas();
+		
 		for (let i = 0; i < points.length; i++) {
 			renderPoint(points[i]);
 		}
@@ -81,11 +92,11 @@
 	function generateAndRenderConvexHull() {
 		redrawPoints(points);
 		let { convexHull, partialHulls } = ChenConvexHull.calculate(points);
-		ctx.strokeStyle = "#FF0000";
+		ctx.strokeStyle = colors.electricBlue;
 		for (let i = 0; i < partialHulls.length; i++) {
 			connectPointsByLine(partialHulls[i]);
 		}
-		ctx.strokeStyle = "#000000";
+		ctx.strokeStyle = colors.almostBlackBlue;
 		connectPointsByLine(convexHull);
 	}
 
