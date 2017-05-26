@@ -9,7 +9,7 @@
 
 	const minNumPoints = 500;
 	const maxNumPoints = 1000;
-	
+
 	let points = [];
 
 	initEventListeners();
@@ -79,6 +79,7 @@
 	}
 
 	function generateAndRenderConvexHull() {
+		redrawPoints(points);
 		let { convexHull, partialHulls } = ChenConvexHull.calculate(points);
 		ctx.strokeStyle = "#FF0000";
 		for (let i = 0; i < partialHulls.length; i++) {
