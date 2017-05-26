@@ -1,24 +1,29 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Chan's 2d Convex Hull Algorithm</title>
 	<meta name="description" content="chan convex hull">
-  	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/style.css">
 
 </head>
 
 <body>
- <div class="wrapper">
- 	<h1>Chan's Algorithm</h1>
- 	<div class="canvaswrapper">
- 	<canvas id="dotcanvas" height="400" width="600"></canvas>
- 	</div>
- 	<button class="btn btn-primary" id="gen_pts">Generate points</button><button class="btn btn-primary" id="gen_hull">Generate Hull</button><button class="btn btn-primary" id="clear">Clear</button>
- </div>
+	<div class="wrapper">
+		<h1>Chan's Algorithm</h1>
+		<div class="canvas-wrapper">
+			<canvas id="point-canvas" height="400" width="600"></canvas>
+		</div>
+		<button id="btn-gen-pts">Generate points</button>
+		<button id="btn-gen-hull">Generate Hull</button>
+		<button id="btn-clear">Clear</button>
+	</div>
 </body>
 <script src="js/jquery-2.2.3.min.js"></script>
+<script src="js/chenConvexHull.js"></script>
 <script src="js/script.js"></script>
+
 </html>
