@@ -1,4 +1,4 @@
-const ChenConvexHull = function () {
+const ChanConvexHull = function () {
 	const LEFT = 1;
 	const RIGHT = -1;
 	const SAME = 0;
