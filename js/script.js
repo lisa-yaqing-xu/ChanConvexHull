@@ -91,7 +91,7 @@
 
 	function generateAndRenderConvexHull() {
 		redrawPoints(points);
-		let { convexHull, partialHulls } = ChenConvexHull.calculate(points);
+		let { convexHull, partialHulls } = ChanConvexHull.calculate(points);
 		ctx.strokeStyle = colors.electricBlue;
 		for (let i = 0; i < partialHulls.length; i++) {
 			connectPointsByLine(partialHulls[i]);
