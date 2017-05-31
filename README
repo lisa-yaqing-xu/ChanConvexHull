@@ -4,3 +4,4 @@ Since it's Javascript, just run index.html. The UI should be straightfoward--Gen
 
 I didn't add UI to change the number of points, but in js/script.js there should be minNumPoints and maxNumPoints you can set to generate number of points between [b,t].
 
+Also, js/chanConvexHull.js can be used on any 2d point set so much as they are formatted as {x,y} and in viewport space rather than normal coordinates (0,0 on the top left).
