@@ -1,4 +1,6 @@
 const ChanConvexHull = function () {
+	'use strict';
+	
 	const LEFT = 1;
 	const RIGHT = -1;
 	const SAME = 0;
@@ -61,30 +63,30 @@ const ChanConvexHull = function () {
 	 * @param {*} points 
 	 */
 	function grahamScan(points) {
-		let v_lowest = points[0];
+		let vertexLowest = points[0];
 		//find lowest point
 		for (let i = 1; i < points.length; i++) {
-			if (points[i].y > v_lowest.y) {
-				v_lowest = points[i];
+			if (points[i].y > vertexLowest.y) {
+				vertexLowest = points[i];
 			}
-			else if (points[i].y === v_lowest.y && points[i].x < v_lowest.x) {
-				v_lowest = points[i];
+			else if (points[i].y === vertexLowest.y && points[i].x < vertexLowest.x) {
+				vertexLowest = points[i];
 			}
 			//console.log(v_lowest);
 		}
-		if (v_lowest)
+		if (vertexLowest)
 
 			//sort the array by angle
 			points.sort(function (a, b) {
 				//a is lowest point
-				if (a.y === v_lowest.y && a.x === v_lowest.x) return -1;
+				if (a.y === vertexLowest.y && a.x === vertexLowest.x) return -1;
 				//b is lowest point
-				if (b.y === v_lowest.y && b.x === v_lowest.x) return 1;
+				if (b.y === vertexLowest.y && b.x === vertexLowest.x) return 1;
 				//neither
 
-				let ang_a = angleToPoint(v_lowest, a);
-				let ang_b = angleToPoint(v_lowest, b);
-				if (ang_a > ang_b) return 1;
+				let angleA = angleToPoint(vertexLowest, a);
+				let angleB = angleToPoint(vertexLowest, b);
+				if (angleA > angleB) return 1;
 				else return -1;
 			});
 
@@ -107,12 +109,12 @@ const ChanConvexHull = function () {
 		stack[1] = points[1];
 		let current = points[2];
 		let index = 2;
-		let stacklen = 2;
+		let stackLength = 2;
 		while (index < points.length) {
-			stacklen = stack.length;
+			stackLength = stack.length;
 			//console.log(stacklen);
-			if (stacklen > 1) {//make sure there's at least 2 things before left test
-				let l = checkIfLeftTurn(stack[stacklen - 2], stack[stacklen - 1], points[index])
+			if (stackLength > 1) {//make sure there's at least 2 things before left test
+				let l = checkIfLeftTurn(stack[stackLength - 2], stack[stackLength - 1], points[index])
 				if (l) {
 					stack.push(points[index]);
 					index++;
@@ -250,14 +252,14 @@ const ChanConvexHull = function () {
 	function calculatePartialHulls(m, points) {
 		let numpartition = Math.ceil(points.length / m);
 		let partition = [];
-		let ph_index = 0;
+		let partialHullIndex = 0;
 		partition.push([]);
 		for (let i = 0; i < points.length; i++) {
-			if (i >= (ph_index + 1) * m) {
-				ph_index++;
+			if (i >= (partialHullIndex + 1) * m) {
+				partialHullIndex++;
 				partition.push([]);
 			}
-			partition[ph_index].push(points[i]);
+			partition[partialHullIndex].push(points[i]);
 
 		}
 		let hulls = []
@@ -280,12 +282,12 @@ const ChanConvexHull = function () {
 		let partialHulls = [];
 
 		if (points.length > 3) {
-			let exp = 1;
+			let exponent = 1;
 			while (!finalHull) {
-				let m = Math.pow(2, Math.pow(2, exp));
+				let m = Math.pow(2, Math.pow(2, exponent));
 				partialHulls = calculatePartialHulls(m, points);
 				finalHull = jarvisMarch(m, partialHulls);
-				exp++;
+				exponent++;
 			}
 
 		}
